@@ -1,30 +1,27 @@
+#!/usr/bin/php
 <?php
 require_once 'swift/lib/swift_required.php';
-
+require_once 'config.php';
 if ($argc < 2)
-  die('Provide filename');
+  die("Provide filename\n");
 $mailFilePath = $argv[1];
 
-print $mailFilePath;
-
 if (!file_exists($mailFilePath))
-  die ('File doesn\'t exixts');
+  die ("File doesn't exists\n");
 
 $body = fread(fopen($mailFilePath, 'r'), filesize($mailFilePath));
 
 $transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'sslv3')
-        ->setUsername('')
-        ->setPassword('');
+        ->setUsername($mailer_config['gmail_username'])
+        ->setPassword($mailer_config['gmail_password']);
 
 $mailer = Swift_Mailer::newInstance($transport);
 
 $message = Swift_Message::newInstance(basename($mailFilePath))
-  ->setFrom(array('mandeburka@gmail.com'))
-  ->setTo(array('agavkalyuk@malkosua.com', 'aliaxej@gmail.com', 'alaksiej.lavoncyk@tol.org'));
+  ->setFrom($mailer_config['sender'])
+  ->setTo($mailer_config['recipients']);
 
 preg_match_all('/(background="([^<>\"]*)|src="([^<>\"]*)|url\(([^\(\)]*)\))/', $body, $matches);
-
-print_r($matches);
 
 if (count($matches) > 2){
   $images = array();
@@ -44,4 +41,5 @@ if (count($matches) > 2){
 print_r($images);
 
 $message->setBody($body, 'text/html');
-print_r($mailer->send($message));
+print "success sents - ".$mailer->send($message);
+print "\n";

@@ -1,0 +1,6 @@
+<?php
+$mailer_config['username'] = "yourname@gmail.com";
+$mailer_config['password'] = "your_password";
+$mailer_config['sender'] = "yourname@gmail.com";
+$mailer_config['recipients'] = array("some_recipient@localhost.com");
+?>
